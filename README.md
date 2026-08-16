@@ -42,14 +42,20 @@ download, or a snap install) and so need a real script instead of the
 `packages` file (e.g. `raindrop/setup.sh` depends on `snapd/packages`
 having already installed `snap`).
 
+`install.sh` doesn't guarantee an order *between* `setup.sh` files, so a
+`setup.sh` that depends on another directory's `setup.sh` having already
+run (not just its `packages`) must invoke it explicitly rather than rely
+on discovery order — see `raindrop/setup.sh`'s explicit call into
+`../snapd/setup.sh` below.
+
 ## Bundled apps
 
 | Directory | What it installs | Mechanism |
 | --- | --- | --- |
 | [`hyprmon/`](hyprmon/) | [hyprmon](https://github.com/erans/hyprmon), a multi-monitor profile manager for Hyprland | AUR package (`hyprmon-bin`) |
-| [`snapd/`](snapd/) | [snapd](https://snapcraft.io/), required for snap-packaged apps such as `raindrop/` | AUR package (`snapd`) |
+| [`snapd/`](snapd/) | [snapd](https://snapcraft.io/), required for snap-packaged apps such as `raindrop/` | AUR package (`snapd`) + `setup.sh` (enables `snapd.socket`, `snapd.apparmor.service` if AppArmor is active, and the `/snap` classic-support symlink) |
 | [`warp/`](warp/) | [Warp Terminal](https://www.warp.dev/), via its Linux AppImage | `setup.sh` (downloads the AppImage, extracts an icon, writes a `.desktop` entry; idempotent and self-updating) |
-| [`raindrop/`](raindrop/) | [Raindrop.io](https://raindrop.io/), via snap | `setup.sh` (installs the `raindrop` snap, symlinks its desktop file) |
+| [`raindrop/`](raindrop/) | [Raindrop.io](https://raindrop.io/), via snap | `setup.sh` (runs `../snapd/setup.sh` first, installs the `raindrop` snap, symlinks its desktop file) |
 
 Ported from [nicholasadamou/omarchy-scripts](https://github.com/nicholasadamou/omarchy-scripts).
 

@@ -5,10 +5,15 @@
 # https://github.com/nicholasadamou/omarchy-scripts/blob/master/raindrop/install.sh
 # -- the original re-implemented a full snapd install as a fallback;
 # here that's unnecessary because install.sh runs every `packages` file
-# (including ../snapd/packages) before any setup.sh, so snapd is already
-# present by the time this runs. If it isn't, that's a real problem
-# worth surfacing rather than silently re-installing snapd differently
-# here than the rest of the module does.
+# (including ../snapd/packages) before any setup.sh, so the snapd
+# *package* is already present by the time this runs.
+#
+# snapd also needs post-install configuration (socket enabled, /snap
+# symlink) before `snap install` will work, which ../snapd/setup.sh
+# does. install.sh's setup.sh discovery has no defined cross-directory
+# order (and even alphabetical order would run this before snapd's, "r"
+# < "s"), so that dependency is invoked explicitly below instead of
+# assumed from directory-scan order.
 
 set -e
 
@@ -19,6 +24,10 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 echo -e "${GREEN}=== Raindrop.io Installation Script ===${NC}\n"
+
+if [[ -f "../snapd/setup.sh" ]]; then
+    (cd ../snapd && bash setup.sh)
+fi
 
 if ! command -v snap &> /dev/null; then
     echo -e "${RED}Error: snap is not installed.${NC}"
