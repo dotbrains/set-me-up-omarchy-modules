@@ -1,0 +1,3 @@
+# hyprmon: multi-monitor profile manager for Hyprland
+# https://github.com/erans/hyprmon
+aur "hyprmon-bin"

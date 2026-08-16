@@ -1,0 +1,3 @@
+# snapd: needed for snap-packaged apps (e.g. raindrop, see ../raindrop/)
+# https://snapcraft.io/
+aur "snapd"

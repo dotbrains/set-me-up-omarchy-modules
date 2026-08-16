@@ -29,6 +29,16 @@ main() {
         )
     done < <(find . -type f -name "packages" -print0)
 
+    # Packages first, then setup scripts -- some setup.sh files (e.g.
+    # raindrop/) depend on a package installed by another module's
+    # packages file (e.g. snapd/) having already run.
+    while IFS= read -r -d '' setup_file; do
+        (
+            cd "$(dirname "$setup_file")" &&
+                bash "$(basename "$setup_file")"
+        )
+    done < <(find . -type f -name "setup.sh" -print0)
+
 }
 
 main

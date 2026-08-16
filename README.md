@@ -33,6 +33,26 @@ ecosystem already ships keeps package installation consistent across every
 Arch-based module rather than depending on Omarchy-specific tooling for
 something that isn't actually Omarchy-specific.
 
+Once every `packages` file has been installed, `install.sh` makes a second
+pass and runs every file named `setup.sh` it finds. This second pass exists
+for apps that aren't available as a pacman/AUR package (e.g. an AppImage
+download, or a snap install) and so need a real script instead of the
+`packages` DSL. Running all `packages` files before any `setup.sh` means a
+`setup.sh` can rely on a package installed by another directory's
+`packages` file (e.g. `raindrop/setup.sh` depends on `snapd/packages`
+having already installed `snap`).
+
+## Bundled apps
+
+| Directory | What it installs | Mechanism |
+| --- | --- | --- |
+| [`hyprmon/`](hyprmon/) | [hyprmon](https://github.com/erans/hyprmon), a multi-monitor profile manager for Hyprland | AUR package (`hyprmon-bin`) |
+| [`snapd/`](snapd/) | [snapd](https://snapcraft.io/), required for snap-packaged apps such as `raindrop/` | AUR package (`snapd`) |
+| [`warp/`](warp/) | [Warp Terminal](https://www.warp.dev/), via its Linux AppImage | `setup.sh` (downloads the AppImage, extracts an icon, writes a `.desktop` entry; idempotent and self-updating) |
+| [`raindrop/`](raindrop/) | [Raindrop.io](https://raindrop.io/), via snap | `setup.sh` (installs the `raindrop` snap, symlinks its desktop file) |
+
+Ported from [nicholasadamou/omarchy-scripts](https://github.com/nicholasadamou/omarchy-scripts).
+
 ## The `packages` file format
 
 Each `packages` file is a small DSL parsed by `pacman_install_from_file`:
