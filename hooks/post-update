@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Omarchy `post-update` hook for set-me-up.
+#
+# Omarchy fires this hook during `omarchy update`, after packages and
+# migrations have run (see the "Running scripts on system events" section
+# of https://github.com/basecamp/omarchy's manual). Every executable file
+# dropped in ~/.config/omarchy/hooks/post-update.d/ runs at that point.
+#
+# Install this hook with:
+#   omarchy hook install post-update <path-to-this-repo>/hooks/post-update
+#
+# This keeps set-me-up's own dotfiles in sync whenever Omarchy updates
+# itself, by invoking `smu update` if `smu` is available on PATH. If `smu`
+# isn't installed, this hook no-ops cleanly rather than erroring, so it's
+# always safe to have installed regardless of whether set-me-up is present.
+
+if command -v smu >/dev/null 2>&1; then
+    smu update
+fi
+
+exit 0

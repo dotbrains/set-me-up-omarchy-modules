@@ -1,0 +1,62 @@
+name: Lint
+
+on:
+  pull_request:
+    paths:
+      - '**.sh'
+      - '**.bash'
+      - 'hooks/**'
+      - '.github/workflows/lint.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.sh'
+      - '**.bash'
+      - 'hooks/**'
+      - '.github/workflows/lint.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: '.'
+          severity: warning
+          ignore_paths: |
+            node_modules
+            .git
+
+  bash-syntax:
+    name: Bash Syntax Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Check Bash syntax
+        run: |
+          # Check every .sh/.bash file, plus the extensionless Omarchy hooks.
+          find . -type f \( -name "*.sh" -o -name "*.bash" \) -not -path "*/.*" | while read -r file; do
+            echo "Checking $file"
+            bash -n "$file" || exit 1
+          done
+
+          find hooks -type f | while read -r file; do
+            echo "Checking $file"
+            bash -n "$file" || exit 1
+          done

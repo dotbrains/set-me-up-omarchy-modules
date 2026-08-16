@@ -1,0 +1,26 @@
+# Example `packages` file for set-me-up-omarchy-modules
+#
+# Rename this file to `packages` (no extension) inside a directory under
+# this repo and it will be picked up by install.sh, which finds every
+# `packages` file in this tree and installs it via `dotbrains/utilities`'s
+# pacman::pacman_install_from_file (aliased as pacman_install_from_file).
+#
+# This is a comment-only example: nothing is installed by default. Fill in
+# your own entries once you know what you actually want on your Omarchy
+# machine -- don't rely on a curated list guessed ahead of time.
+#
+# Format (one directive per line):
+#
+#   pacman "package-name"                       # install from the official repos
+#   aur "package-name"                          # install from the AUR (default helper: yay)
+#   aur "package-name" [helper: "yay"]          # install from the AUR with an explicit helper
+#   remove "package-name"                       # remove a package (via pacman -Rns)
+#
+# Lines starting with `#` are comments and are ignored.
+#
+# Example (uncomment and edit to use):
+#
+# pacman "ripgrep"
+# aur "visual-studio-code-bin"
+# aur "spotify" [helper: "yay"]
+# remove "some-unwanted-package"
